@@ -8,7 +8,7 @@ It is equipped with an AI cam made by DFRobot, and can track and identify the fl
 
 ### How to deploy this?
 
-Using the same hardware and assemble them on yourself. And download the Arduino IDE on [website](arduino.cc), deploy the code to your bot, then enjoy. 
+Using the same hardware and assemble them on yourself. And download the Arduino IDE on [website](https://www.arduino.cc/en/software), deploy the code to your bot, then enjoy. 
 
 ### Contribution
 
