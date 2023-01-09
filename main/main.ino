@@ -3,13 +3,16 @@
 #include "DCMotor.h"
 #include "MyServo.h"
 #include "Husky.h"
+#include "Bluetooth.h"
 
 HC_SR04 disleft;
 HC_SR04 disright;
 int disPin[4] = {5, 6, 7, 8}; //超声波接口
 
 DCMotor mot;
-int motPin = 0;
+int motPin = 9;
+
+// Bluetooth bt(2, 3);
 
 void prepare();
 void warn();
@@ -27,30 +30,41 @@ void setup() {
   Serial.begin(9600);
   // disleft.init(disPin[0], disPin[1]);
   // disright.init(disPin[2], disPin[3]);
-  // mot.init(motPin);
-  servo.init(servoPin);
-  Serial.println("Init successfully! ");
+  mot.init(motPin);
+  // servo.init(servoPin);
   // cam.init(camPin);
-  //prepare();
+  // bt.init();
+  pinMode(13, INPUT);
+  Serial.println("Init successfully! ");
+  // prepare();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  servo.set_ang(def_ang);
-  mot.on();
-  while (disleft.read_dis() < 150 || disright.read_dis() < 150) {
-    warn();
-    if (disleft.read_dis() < 150) servo.set_ang(right_ang);
-    else if (disright.read_dis() < 150) servo.set_ang(left_ang);
-  }
-  if (cam.fd_tra()) {
-    if (cam.tra_posx() < 150) servo.set_ang(left_ang);
-    else if (cam.tra_posx() > 170) servo.set_ang(right_ang);
-    else servo.set_ang(def_ang);
+  // servo.set_ang(def_ang);
+  // mot.off();
+  // delay(1000);
+  // mot.on();
+  // delay(1000);
+  // while (disleft.read_dis() < 150 || disright.read_dis() < 150) {
+  //   warn();
+  //   if (disleft.read_dis() < 150) servo.set_ang(right_ang);
+  //   else if (disright.read_dis() < 150) servo.set_ang(left_ang);
+  // }
+  // if (cam.fd_tra()) {
+  //   if (cam.tra_posx() < 150) servo.set_ang(left_ang);
+  //   else if (cam.tra_posx() > 170) servo.set_ang(right_ang);
+  //   else servo.set_ang(def_ang);
+  // } else {
+  //   servo.set_ang(def_ang);
+  // }
+  if (digitalRead(13) != HIGH) {
+    mot.on();
+    delay(1000);
   } else {
-    servo.set_ang(def_ang);
+    mot.off();
+    delay(1000);
   }
-  
 }
 
 void prepare() {
