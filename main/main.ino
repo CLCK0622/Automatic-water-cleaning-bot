@@ -1,101 +1,87 @@
 #include <Arduino.h>
-#include "HC_SR04.h"
-#include "DCMotor.h"
-#include "MyServo.h"
-#include "Husky.h"
-#include "Bluetooth.h"
+#include <Servo.h>
 
-HC_SR04 disleft;
-HC_SR04 disright;
-int disPin[4] = {5, 6, 7, 8}; //超声波接口
+const int servoControl = 3;
+const int motorControl = 9;
+const int passerControl = 6;
+const int boxControl = 10;
+const int servoPin = 7;
+const int motorPin = 2;
+const int passerPin = 8;
+const int boxPin = 12; 
 
-DCMotor mot;
-int motPin = 9;
+Servo mys;
+Servo box;
 
-// Bluetooth bt(2, 3);
-
-void prepare();
-void warn();
-int ledsdPin = 0;
-
-int servoPin = 2;
-MyServo servo;
-int left_ang = 60, right_ang = 175, def_ang = 120;
-
-Husky cam;
-int camPin = 0;
+int servoVal;
+int motorVal;
+int passerVal;
+int boxVal;
 
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  // disleft.init(disPin[0], disPin[1]);
-  // disright.init(disPin[2], disPin[3]);
-  mot.init(motPin);
-  // servo.init(servoPin);
-  // cam.init(camPin);
-  // bt.init();
-  pinMode(13, INPUT);
-  Serial.println("Init successfully! ");
-  // prepare();
+  pinMode(servoControl, INPUT);
+  pinMode(motorControl, INPUT);
+  pinMode(passerControl, INPUT);
+  pinMode(boxControl, INPUT);
+  Serial.begin(115200);
+  pinMode(servoPin, OUTPUT);
+  pinMode(motorPin, OUTPUT);
+  pinMode(passerPin, OUTPUT);
+  pinMode(boxPin, OUTPUT);
+  mys.attach(servoPin, 500, 2500);
+  box.attach(boxPin, 500, 2500);
+  mys.write(110);
+  box.write(90);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // servo.set_ang(def_ang);
-  // mot.off();
-  // delay(1000);
-  // mot.on();
-  // delay(1000);
-  // while (disleft.read_dis() < 150 || disright.read_dis() < 150) {
-  //   warn();
-  //   if (disleft.read_dis() < 150) servo.set_ang(right_ang);
-  //   else if (disright.read_dis() < 150) servo.set_ang(left_ang);
-  // }
-  // if (cam.fd_tra()) {
-  //   if (cam.tra_posx() < 150) servo.set_ang(left_ang);
-  //   else if (cam.tra_posx() > 170) servo.set_ang(right_ang);
-  //   else servo.set_ang(def_ang);
-  // } else {
-  //   servo.set_ang(def_ang);
-  // }
-  if (digitalRead(13) != HIGH) {
-    mot.on();
-    delay(1000);
+  servoVal = pulseIn(servoControl, HIGH);
+  motorVal = pulseIn(motorControl, HIGH);  
+  passerVal = pulseIn(passerControl, HIGH);
+  boxVal = pulseIn(boxControl, HIGH);
+  if (servoVal > 1480 && servoVal < 2000) {
+    mys.write(servoCalc(servoVal));
+    Serial.println("left");
+  } else if (servoVal < 1400 && servoVal > 900) {
+    mys.write(servoCalc(servoVal));
+    Serial.println("right");
   } else {
-    mot.off();
-    delay(1000);
+    mys.write(110);
   }
+  // Serial.println(servoVal);
+  if (motorVal < 1350 && motorVal > 900) {
+    digitalWrite(motorPin, HIGH);
+    Serial.println("forward");
+  } else {
+    digitalWrite(motorPin, LOW);
+  }
+  // Serial.println(passerVal);
+  if (passerVal < 1000 && passerVal > 900) {
+    digitalWrite(passerPin, HIGH);
+    Serial.println("rubbishIn");
+  } else {
+    digitalWrite(passerPin, LOW);
+  }
+  if (boxVal < 1000 && boxVal > 900) {
+    box.write(75);
+    Serial.println("Box up");
+  } else if (boxVal > 1900 && boxVal < 2000) {
+    box.write(105);
+    Serial.println("Box down");
+  } else {
+    box.write(90);
+  }
+  // Serial.println(boxVal);
 }
 
-void prepare() {
-  pinMode(ledsdPin, OUTPUT);
-  digitalWrite(ledsdPin, HIGH);
-  delay(3000);
-  digitalWrite(ledsdPin, LOW);
-}
-
-void warn() {
-  pinMode(ledsdPin, OUTPUT);
-  for (int i = 0; i < 3; i++) {
-    digitalWrite(ledsdPin, HIGH);
-    delay(200);
-    digitalWrite(ledsdPin, LOW);
-  }
+int servoCalc(int val) {
+  return (110 + (double(val) - 1450) / 250 * 40); 
 }
 
 /*
-开机：
-向前1s
-舵机左1s中1s右1s
-LED灯闪烁3次 蜂鸣器鸣叫3次
-运行：
-找到垃圾（红灯 蜂鸣器1s1次）：
-垃圾在视野左侧：向左
-右侧：向右
-向前走；
-未找到垃圾（橙灯 蜂鸣器不动）：
-持续向前
-若左/右侧小于100cm则向另一侧转向
-若前侧小于100cm则向左右小的转向
-
+servoVal: 
+  range: 1200-1700
+  default: 1450
+  single_range: 250
+  (Val - 1450) / 250 * 40
 */
