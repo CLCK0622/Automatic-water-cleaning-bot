@@ -10,7 +10,8 @@ const int servoPin = 7;
 const int motorPin = 2;
 const int passerPin = 8;
 const int boxPin = 12;
-const int leftTrig, leftEcho, rightTrig, rightEcho;
+const int leftTrig = 4, leftEcho = 5; 
+const int rightTrig = 6, rightEcho = 7;
 
 HC_SR04 disLeft;
 HC_SR04 disRight;
