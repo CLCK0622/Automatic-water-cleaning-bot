@@ -1,4 +1,4 @@
-# Automatic watercleaning bot system
+# Automatic watercleaning bot
 
 An automatic water cleaning bot made with Arduino Uno3.
 
