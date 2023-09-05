@@ -1,6 +1,0 @@
-{
-    "board": "arduino:avr:uno",
-    "sketch": "main/main.ino",
-    "port": "/dev/tty.usbmodem142401",
-    "programmer": "arduino:arduinoasisp"
-}
