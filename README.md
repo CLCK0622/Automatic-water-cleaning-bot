@@ -6,7 +6,7 @@ An automatic water cleaning bot made with Arduino Uno3.
 
 It is equipped with an AI cam made by DFRobot, and can track and identify the floating rubbish. 
 
-### How to deploy this?
+### How to use?
 
 Using the same hardware and assemble them on yourself. And download the Arduino IDE on [website](https://www.arduino.cc/en/software), deploy the code to your bot, then enjoy. 
 
